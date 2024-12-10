@@ -1,10 +1,10 @@
 const knex = require('knex')
-const dbConnection = knex({
+const db = knex({
     client: 'mssql',
     connection: {
         user: 'user',
         password: 'password',
-        server: 'D3743-06',
+        server: 'D3744-20',
         database: 'Magasin',
         options: {
             encrypt: true,
@@ -14,4 +14,4 @@ const dbConnection = knex({
    "useNullAsDefault": true
 });
 
-module.exports = dbConnection;
+module.exports = db;

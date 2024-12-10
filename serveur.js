@@ -7,10 +7,11 @@ const app = express();
 const PORT = 3000;
 
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public/utilisateur')));
+app.use(express.static(path.join(__dirname, 'public/admin')));
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'Teststore.html'));
+    res.sendFile(path.join(__dirname, 'public/utilisateur', 'userMain.html'));
 });
 
 // Produit
@@ -60,10 +61,10 @@ app.get('/api/produit', async (req, res) => {
  */
 
 app.post('/api/produit', async (req, res) => {
-    const { nom, description, prix, quantite } = req.body;
+    const { nom, description, prix, quantite: stock } = req.body;
     const fournisseurNom = "NULL"
 
-    if (!nom || !description || !prix || !quantite) {
+    if (!nom || !description || !prix || !stock) {
       return res.status(400).json({ message: 'Tous les champs sont obligatoires.' });
     }
 
@@ -71,7 +72,7 @@ app.post('/api/produit', async (req, res) => {
         return res.status(400).json({ message: 'Le prix saisi doit respecter le format suivant: 10 , 3.99 , 129.19' });
     }
 
-    if (!valideQuantite(quantite)) {
+    if (!valideQuantite(stock)) {
         return res.status(400).json({ message: 'La quantité saisi doit être un entier.' });
     }
   
@@ -83,7 +84,7 @@ app.post('/api/produit', async (req, res) => {
                 @description = ?, 
                 @prix = ?, 
                 @stock = ?
-        `, [fournisseurNom, nom, description, prix, quantite]);
+        `, [fournisseurNom, nom, description, prix, stock]);
 
         res.json(produit);
     } catch (error) {
@@ -115,8 +116,155 @@ app.delete('/api/produit/:produitID', async (req, res) => {
   }
 });
 
+app.put('/api/produit/:produitID', async (req, res) => {
+  // Récupère l'ID de l'inscription depuis les paramètres de la requête (req.params)
+  const { id } = req.params;
+
+  // Extraction des champs modifiés depuis le corps de la requête (req.body)
+  const { nom, description, prix, quantite } = req.body;
+
+  if (!nom || !description || !prix || !quantite ) {
+    return res.status(400).json({ message: 'Tous les champs sont obligatoires.' });
+  }
+
+  try {
+    // Met à jour l'inscription correspondant à l'ID donné
+    const updated = await db('produit').where({ id }).update({ nom, description, prix, quantite });
+
+    // Si aucune inscription n'est trouvée avec cet ID, retourne une erreur 404 (Not Found)
+    if (!updated) {
+      return res.status(404).json({ message: 'Inscription non trouvée.' });
+    }
+
+    // Récupère et renvoie l'inscription mise à jour
+    const produit = await db('produit').where({ id }).first();
+    if (produit) {
+        res.json(produit); // Send the updated product object
+    } else {
+        res.status(404).json({ message: 'Produit non trouvé.' });
+    }    
+  } catch (error) {
+    // En cas d'erreur, retourne une réponse avec un message d'erreur et un code 500
+    res.status(500).json({ message: 'Erreur lors de la mise à jour de l’inscription.', error: error.message });
+  }
+});
+
+/*
+* Route GET /api/userProduit
+* Cette route ajoute des produits a la table "userTableProduit"
+*/
+app.get('/api/utilisateur', async (req, res) => {
+  try {
+    // Obtenir les paramètres de la requête
+    const queryParams = req.query;
+
+    // Liste des champs valides pour la table "inscription"
+    const validFields = ['userID', 'adresseID', 'prenom', 'nom', 'email', 'numTelephone', 'motDePasse', 'accepteComptant', 'accepteInteract', 'estMajeur'];
+
+    // Vérification : assurez-vous que tous les champs spécifiés ne sont pas vides
+    for (const [key, value] of Object.entries(queryParams)) {
+      if (validFields.includes(key) && (!value || value.trim() === '')) {
+        return res.status(400).json({ message: `Le champ '${key}' ne peut pas être vide.` });
+      }
+    }
+
+    // Construire la requête filtrée
+    const filters = {};
+    validFields.forEach((field) => {
+      if (queryParams[field]) {
+        filters[field] = queryParams[field];
+      }
+    });
+
+    // Exécuter la requête filtrée
+    const utilisateurs = await db('Utilisateur').where(filters).select('*');
+
+    // Retourner les inscriptions trouvées
+    res.json(utilisateurs);
+  } catch (error) {
+    // Gérer les erreurs
+    res.status(500).json({ message: 'Erreur lors de la récupération des inscriptions.', error: error.message });
+  }
+});
+
+/*
+* Route GET /api/commandeEnCours
+* Cette route ajoute des utilisateur a la table "tableCommandeEnCours"
+*/
+app.get('/api/commandeEnCours', async (req, res) => {
+  try {
+    // Obtenir les paramètres de la requête
+    const queryParams = req.query;
+
+    // Liste des champs valides pour la table "inscription"
+    const validFields = ['commandeID', 'userID', 'dateCommande', 'dateLivraison', 'estLivre'];
+
+    // Vérification : assurez-vous que tous les champs spécifiés ne sont pas vides
+    for (const [key, value] of Object.entries(queryParams)) {
+      if (validFields.includes(key) && (!value || value.trim() === '')) {
+        return res.status(400).json({ message: `Le champ '${key}' ne peut pas être vide.` });
+      }
+    }
+
+    // Construire la requête filtrée
+    const filters = {};
+    validFields.forEach((field) => {
+      if (queryParams[field]) {
+        filters[field] = queryParams[field];
+      }
+    });
+
+    // Exécuter la requête filtrée
+    const commandes = await db('Commande').where(filters).select('*');
+
+    // Retourner les inscriptions trouvées
+    res.json(commandes);
+  } catch (error) {
+    // Gérer les erreurs
+    res.status(500).json({ message: 'Erreur lors de la récupération des commandes.', error: error.message });
+  }
+});
 
 
+// Coté user
+
+/*
+* Route GET /api/userProduit
+* Cette route ajoute des produits a la table "userTableProduit"
+*/
+app.get('/api/userProduit', async (req, res) => {
+  try {
+    // Obtenir les paramètres de la requête
+    const queryParams = req.query;
+
+    // Liste des champs valides pour la table "inscription"
+    const validFields = ['produitID', 'fournisseurID', 'nom', 'description', 'prix', 'stock'];
+
+    // Vérification : assurez-vous que tous les champs spécifiés ne sont pas vides
+    for (const [key, value] of Object.entries(queryParams)) {
+      if (validFields.includes(key) && (!value || value.trim() === '')) {
+        return res.status(400).json({ message: `Le champ '${key}' ne peut pas être vide.` });
+      }
+    }
+
+    // Construire la requête filtrée
+    const filters = {};
+    validFields.forEach((field) => {
+      if (queryParams[field]) {
+        filters[field] = queryParams[field];
+      }
+    });
+
+    // Exécuter la requête filtrée
+    const produits = await db('Produit').where(filters).select('*');
+
+    // Retourner les inscriptions trouvées
+    res.json(produits);
+  } catch (error) {
+    // Gérer les erreurs
+    res.status(500).json({ message: 'Erreur lors de la récupération des inscriptions.', error: error.message });
+  }
+});
 
 
 

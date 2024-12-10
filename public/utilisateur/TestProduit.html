@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Produits Disponibles</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma/css/bulma.min.css">
+</head>
+<body>
+    <section class="hero is-primary">
+        <div class="hero-body">
+            <div class="container">
+                <h1 class="title">Produits Disponibles</h1>
+                <h2 class="subtitle">Liste des produits dans le magasin</h2>
+            </div>
+        </div>
+    </section>
+
+    <div class="container mt-5">
+
+        <div class="has-text-centered mt-5">
+            <a href="./userMain.html" class="button is-light">Retour</a>
+        </div>
+
+        <table class="table is-striped is-fullwidth" id="userTableProduit">
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Description</th>
+                    <th>Prix</th>
+                    <th>Quantité</th>
+                </tr>
+            </thead>
+            <tbody id="productsTableBody">
+
+            </tbody>
+        </table>
+    </div>
+
+    <footer class="footer">
+        <div class="content has-text-centered">
+            <p>© 2024 Magasin en ligne. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+
+</body>
+</html>

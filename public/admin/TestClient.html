@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste des Clients</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma/css/bulma.min.css">
+</head>
+<body>
+    <section class="hero is-info">
+        <div class="hero-body">
+            <div class="container">
+                <h1 class="title">Gestion des Clients</h1>
+                <h2 class="subtitle">Affichage de tous les clients enregistrés</h2>
+            </div>
+        </div>
+    </section>
+
+    <div class="container mt-5">
+
+        <div class="has-text-centered mt-5">
+            <a href="Teststore.html" class="button is-light">Retour</a>
+        </div>
+        <h2 class="title">Liste des Clients</h2>
+        <table class="table is-striped is-fullwidth" id="tableUtilisateur">
+            <thead>
+                <tr>
+                    <th>Adresse ID</th>
+                    <th>Prénom</th>
+                    <th>Nom</th>
+                    <th>Adresse Mail</th>
+                    <th>Numéro de téléphone</th>
+                    <th>Mot de passe</th>
+                    <th>Accepte Compant</th>
+                    <th>Accepte Interac</th>
+                    <th>Est Majeur</th>
+                </tr>
+            </thead>
+            <tbody id="productsTableBody">
+
+            </tbody>
+        </table>
+    </div>
+
+    <footer class="footer">
+        <div class="content has-text-centered">
+            <p>© 2024 Magasin en ligne. Tous droits réservés.</p>
+        </div>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>
