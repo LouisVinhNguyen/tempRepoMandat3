@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Passer et Annuler une Commande</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma/css/bulma.min.css">
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const form = document.querySelector("#orderForm");
+            const orderList = document.querySelector("#orderList");
+
+            form.addEventListener("submit", (e) => {
+                e.preventDefault();
+
+                const clientName = form.clientName.value;
+                const productName = form.productName.value;
+                const quantity = form.quantity.value;
+                const orderDate = new Date().toLocaleDateString();
+
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${clientName}</td>
+                    <td>${productName}</td>
+                    <td>${quantity}</td>
+                    <td>${orderDate}</td>
+                    <td>
+                        <button class="button is-danger is-small">Annuler</button>
+                    </td>
+                `;
+
+                row.querySelector(".is-danger").addEventListener("click", () => {
+                    row.remove();
+                });
+
+                orderList.appendChild(row);
+
+                form.reset();
+            });
+        });
+    </script>
+</head>
+<body>
+    <section class="hero is-link">
+        <div class="hero-body">
+            <div class="container">
+                <h1 class="title">Passer et Annuler une Commande</h1>
+                <h2 class="subtitle">Gérez vos commandes en un clic</h2>
+            </div>
+        </div>
+    </section>
+
+    <div class="container mt-5">
+        <div class="box">
+            <h2 class="title is-5">Passer une Commande</h2>
+            <form id="orderForm">
+                <div class="field">
+                    <label class="label">Nom du Client</label>
+                    <div class="control">
+                        <input class="input" type="text" name="clientName" placeholder="Entrez votre nom" required>
+                    </div>
+                </div>
+                <div class="field">
+                    <label class="label">Numéro de la commande</label>
+                    <div class="control">
+                        <input class="input" type="text" name="productName" placeholder="Entrez le produit souhaité" required>
+                    </div>
+                </div>
+                <div class="field">
+                    <label class="label">Quantité</label>
+                    <div class="control">
+                        <input class="input" type="number" name="quantity" placeholder="Entrez la quantité" min="1" required>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="control">
+                        <button type="submit" class="button is-success">Passer la Commande</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <h2 class="title is-5">Commandes Passées</h2>
+        <table class="table is-striped is-fullwidth">
+            <thead>
+                <tr>
+                    <th>Client</th>
+                    <th>Produit</th>
+                    <th>Quantité</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="orderList">
+            </tbody>
+        </table>
+    </div>
+
+    <footer class="footer">
+        <div class="content has-text-centered">
+            <p>© 2024 Magasin en ligne. Tous droits réservés.</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -7,8 +7,8 @@ const app = express();
 const PORT = 3000;
 
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, 'public/utilisateur')));
-app.use(express.static(path.join(__dirname, 'public/admin')));
+app.use('/utilisateur', express.static(path.join(__dirname, 'public/utilisateur')));
+app.use('/admin', express.static(path.join(__dirname, 'public/admin')));
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/utilisateur', 'userMain.html'));
